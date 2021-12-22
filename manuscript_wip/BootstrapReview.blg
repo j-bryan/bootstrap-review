@@ -1,0 +1,57 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: BootstrapReview.aux
+Reallocating 'name_of_file' (item size: 1) to 6 items.
+The style file: plain.bst
+Reallocating 'name_of_file' (item size: 1) to 11 items.
+Database file #1: references.bib
+I was expecting a `,' or a `}'---line 48 of file references.bib
+ :   
+ :   journal={Journal of Climate and Applied Meteorology},
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for "nordman_convergence_2014"
+Warning--empty journal in thiebaux1984
+Warning--empty year in thiebaux1984
+You've used 6 entries,
+            2118 wiz_defined-function locations,
+            533 strings with 5038 characters,
+and the built_in function-call counts, 1835 in all, are:
+= -- 162
+> -- 107
+< -- 0
++ -- 43
+- -- 36
+* -- 131
+:= -- 327
+add.period$ -- 17
+call.type$ -- 6
+change.case$ -- 33
+chr.to.int$ -- 0
+cite$ -- 8
+duplicate$ -- 68
+empty$ -- 137
+format.name$ -- 36
+if$ -- 365
+int.to.chr$ -- 0
+int.to.str$ -- 6
+missing$ -- 9
+newline$ -- 32
+num.names$ -- 12
+pop$ -- 48
+preamble$ -- 1
+purify$ -- 30
+quote$ -- 0
+skip$ -- 39
+stack$ -- 0
+substring$ -- 74
+swap$ -- 5
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 18
+warning$ -- 2
+while$ -- 15
+width$ -- 7
+write$ -- 61
+(There was 1 error message)

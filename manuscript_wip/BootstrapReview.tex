@@ -1,0 +1,191 @@
+\documentclass[onecolumn,12pt]{iopart}
+\usepackage{graphicx,float}
+\usepackage{fancyhdr}
+\expandafter\let\csname equation*\endcsname\relax
+\expandafter\let\csname endequation*\endcsname\relax
+\usepackage{amssymb,amsmath,comment,enumerate}       % add graphics
+%\usepackage{subfig}
+\usepackage{longtable}
+\usepackage{rotating}
+\usepackage{hyperref}
+\usepackage[final]{pdfpages}
+\usepackage{booktabs} % nice rules for tables
+%\usepackage{microtype} % if using PDF
+\usepackage{geometry}
+\usepackage[lflt ]{floatflt}
+\usepackage{gensymb}
+\usepackage{tikz}
+\usetikzlibrary{plotmarks}
+\usepackage{pgfplots}
+\usetikzlibrary{backgrounds}
+\usepackage{physics}
+\geometry{verbose,letterpaper,tmargin=2.25cm,bmargin=2.25cm,
+     lmargin=2.25cm,rmargin=2.25cm}
+
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prb}{\mathbb{P}}
+
+\pagestyle{fancyplain}
+
+
+\renewcommand{\appendix}{%
+\renewcommand{\thesection}{Appendix \Alph{section}}%
+\setcounter{section}{0}
+}
+
+\begin{document}
+
+\title{Review of statistical bootstrap methods for estimating random uncertainty in turbulent flows}
+
+\author{Jacob Bryan}
+\address{Mechanical and Aerospace Engineering, Utah State University }
+\ead{jacob.bryan@aggiemail.usu.edu}
+
+\author{Barton Smith}
+\address{Mechanical and Aerospace Engineering, Utah State University }
+\ead{barton.smith@usu.edu}
+
+\author{Douglas Neil}
+\address{LaVision Inc.}
+\ead{}
+
+\author{Geordie Richards}
+\address{Mechanical and Aerospace Engineering, Utah State University }
+\ead{geordie.richards@usu.edu}
+
+\begin{abstract}
+Estimating the uncertainty of the sample mean is of critical importance to experimentalists across discplines. While this is a trivial task for independent samples, time-resolved measurement methods, such as time-resolved particle image velocimetry for turbulent flows, typically produce samples which are no longer independent of each other. This significantly complicates the task of estimating the random uncertainty of the mean. An assortment of bootstrap methods that accomplish this task have been presented in the statistics literature, with several being applied previously to experimental data in fluid dynamics. However, ...
+
+\end{abstract}
+
+
+\noindent{\it Keywords}:  
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+Estimating the standard deviation of a finite sample mean computed from evenly spaced observations in a stationary stochastic process is a basic problem in statistics of fundamental significance to experimental science.  The answer is elementary and familiar in the setting of independent (or nearly independent) samples, provided by the standard error of the mean, but when stronger correlations are present this simple problem has a surprising amount of literature devoted to various strategies for resolution.  This problem is of particular interest in experimental fluid mechanics, where increasingly high resolution Particle Image Velocimetry (PIV) and related measurement techniques produce data with substantial temporal and spatial correlations, particularly in the context of turbulent flows, and there is some need for clarity on best practices.  
+
+Among the strategies for estimating the standard deviation of the sample mean in the presence of correlations, block bootstrap methods, and related techniques such as the jackknife, and the method of batch means, have the virtue of simplicity in application.  Indeed, in contrast to modeling by time series and Bayesian estimation approaches \cite{barber2011,box2015}, the block bootstrap methods with automatic block length selection can be applied by simply replacing the standard error formula with a modified equation.  There are other strategies advocated in the fluids literature which retain this simplicity, such as averaging a truncated sum of autocorrelation coefficients, but these alternate approaches can be fraught with sources of error that are avoided by bootstrap techniques (see \cite{theunissen2008} for discussion).  This manuscript will provide a quick reference for applying block bootstrap methods, with a specific focus on estimating the standard deviation of the sample mean computed from a stationary process with correlations, and summarize a comparison of these methods with the more standard techniques in the fluids literature.  The methods will be compared and contrasted using a large collection of data sets from three experiments performed at the Experimental Fluid Dynamics Laboratory at Utah State University.  We aim to demonstrate that block bootstrap methods, particularly the tapered block bootstrap (and equivalently, the tapered jackknife), which is previously unused in the fluids literature, can ameliorate problems with more standard methods while retaining ease of application.
+
+%\begin{itemize}
+%\item Basic set up, with motivation from turbulence, PIV.
+%\item Recall standard methodology, relationship to integral time scale.
+%\item Describe previous papers.  Compare to more involved (times series, Bayesian) methods.
+%\item Summarize paper contents.
+%\end{itemize}
+
+\section{Theory}
+
+Suppose that $X_1,\ldots,X_N$ are samples from a stationary real-valued sequence $\{X_n\}_{n\in\{\ZZ\}}$ with mean $\mu = \E X_t$, and autocovariance sequence
+$R(s) = \E\left((X_t - \mu)(X_{t+|s|}-\mu)\right)$.  The variance of the sample mean $\bar{X}_{N}=\frac{1}{N}(X_{1}+\cdots X_{N})$ can be computed as 
+$Var(\bar{X}_{N}) = \sigma_{N}^{2}/N$, where $\sigma_{N}^{2}:= R(0) + 2\sum_{k=1}^{N}(1-k/N)R(k)$ (see e.g. \cite{smith2018}).  We are interested in estimating the standard deviation of the sample mean, $\sigma_{\bar{X}_{N}}:=\sqrt{Var(\bar{X}_{N}) }$, for $N$ large, particularly as $\bar{X}_{N}$ is asymptotically normal under appropriate conditions.  Indeed, under sufficient moment and mixing conditions for a central limit theorem to be applicable \cite{rosenblatt2012}, the limit 
+$\sigma_{\infty}^{2} := \lim_{N\rightarrow \infty}\sigma_{N}^{2} = \sum_{k=-\infty}^{\infty}R(k)$ exists, and $\sqrt{N}(\bar{X} - \mu)$ converges in distribution to a normal random variable with mean zero and variance $\sigma_{\infty}^{2}$.  Thus, for $N$ large, we may focus on estimators of $\sigma_{\infty}^{2}$ in an effort to approximate the standard deviation of the sample mean as $\sigma_{\bar{X}_{N}} \approx \sigma_{\infty}/\sqrt{N}$.  Note that, in the context of negligible correlations, this reduces to the standard error of the mean, $\sigma_{\bar{X}_{N}} \approx \sigma/\sqrt{N}$, where $\sigma^2 := R(0) = Var(X_t)$.
+
+This approach is closely related to an interpretation in the fluids literature, where, for example, the measurements $X_1,\ldots,X_N$ are drawn from a stationary stochastic process $\{Z_{t}\}_{t\in \RR}$ at evenly spaced time points, i.e. $X_{k} = Z_{k\Delta t}$ for each $k=1,\ldots, N$, with some fixed temporal spacing $\Delta t$.  In this context, the formula $\sigma_{\bar{X}_{N}} \approx \sigma_{\infty}/\sqrt{N}$ is re-expressed as $\sigma_{\bar{X}_{N}} \approx \sigma/\sqrt{N_{\text{eff}}}$, typically referred to as the random uncertainty of the mean, where $N_{\text{eff}}:= \frac{N}{2T_u/\Delta t}$ is the ``effective number of samples'', itself defined in terms of the integral time scale $T_u = \int_{0}^{\infty}\rho(\tau)\,d\tau\approx \frac{1}{2}\left(\sum_{k=-\infty}^{\infty}\rho(k\Delta t)\right)\Delta t$.  Here $\rho(\tau)$ is the temporal autocorrelation of the process $\{Z_{t}\}_{t\in \RR}$, related to the interpretation above by the formula $ R(k) = \sigma^2\rho(k\Delta t)$, for $k=1,\ldots, N$.  That is, chasing through these definitions,
+\begin{align*}
+\sigma_{\bar{X}_{N}} \approx \frac{\sigma}{\sqrt{N_{\text{eff}}}} &= \sigma \sqrt{\frac{2T_u/\Delta t}{N}} 
+= \sigma\sqrt{\frac{\sum_{k=-\infty}^{\infty}\rho(k\Delta t)}{N}} = \sqrt{\frac{\sum_{k=-\infty}^{\infty}R(k)}{N}} 
+= \frac{\sigma_{\infty}}{\sqrt{N}}, 
+\end{align*}
+and the formulas coincide.  Thus, in this signal processing context, asymptotic approximation of $\sigma_{\infty}$, the integral time scale $T_u$, or the effective number of samples $N_{\text{eff}}$, are all equivalent.  We proceed to discuss some techniques for estimating $T_u$ and $N_{\text{eff}}$ that are presented in the fluids literature, and then review bootstrapping techniques advocated for estimation of $\sigma_{\infty}$, and will highlight some previously clarified overlap.
+
+\subsection{Estimating the Integral Time Scale}
+This section should focus on methods for estimating the integral time scale already existent in the fluids literature.
+%Considering again the stationary real-valued sequence $\{X_n\}_{n \in \mathbb{Z}}$, we aim to estimate the uncertainty of the sample mean $\bar{X} = \bar{X}_N$ in terms of the autocorrelation of the samples. We begin with the elementary derivation
+%\begin{align*}
+%	\left(\bar{X}_N - \mu\right)^2 &= \left(\frac{1}{N}\left(X_1 + \dots + X_N\right) - \frac{1}{N}\left(\mu + \dots + \mu\right)\right)^2 \\
+%	&= \left(\frac{1}{N}\sum_{i=1}^{N} \left(X_i - \mu\right)\right) \left(\frac{1}{N}\sum_{k=1}^{N} \left(X_k - \mu\right)\right) \\
+%	&= 
+%\end{align*}
+%
+%An estimate of the integral time scale is necessary for determining the number of independent samples in a record, or equivalently, estimating $N_{\text{eff}}$. The literature contains a diversity of methods for estimating this times scale, and a reliable estimate can be difficult to obtain. For example, Thiebaux and Zwiers in \cite{thiebaux1984} experimented with various summation methods of the autocovariance function and ARMA time series models. They concluded that the estimate of the integral time scale was affected by both the stochastic structure of the process, and in some cases, the record length. The estimator using a summation of the autocovariance function in their study was asymptotically unbiased but biased for records of finite size. This poses a difficulty to estimating the integral time scale from real (i.e. non-infinite) data. This concern was addressed by Bruun 
+
+
+\subsection{Bootstrap Methods}
+This section should focus on what a bootstrap method is and how it works. This should be fairly short. This sets the conceptual foundation for outlining the specifics of each method in subsequent subsections.
+
+
+
+\subsection{Setup}
+IDK what Geordie was intending with this subsection... This requires some more thought. Maybe this is where we can talk about using bootstrap statistics and how to calculate $Var^*(\sqrt{N} Y^*)$ for the various bootstrap methods.
+
+\subsection{Moving and Circular Block Bootstrap}
+This section should explain why the MBB and CBB methods are basically equivalent. We use the CBB here. Any reasons at all why CBB is better than MBB?
+
+\subsection{Stationary Bootstrap}
+This section should show the details of how the stationary bootstrap uses a geometric distribution to weight the autocorrelation coefficient summation and explain that the stationary bootstrap pseudo time series is also stationary, a potential benefit over MBB/CBB in some applications. Biggest things to note here are that CB and SB have similar bias but SB has higher variance due to the additional randomness introduced when drawing random block sizes. However, SB generates stationary pseudoseries and is less sensitive to the choice of block length compared to CB. This can be useful given that the optimal block length is never known in practice (see Politis and White).
+
+\subsection{Tapered Block Bootstrap}
+Make a big deal about this section. Should include a note that TBB has better asymptotic performance than MBB/CBB/SB and that it has not been seen in the fluids literature thus far. Include the formula to calculate the variance included in the appendix of the original paper.
+
+The tapered block bootstrap improves on the asymptotic MSE performance of the CBB and SB methods by reducing the order of magnitude of the bias of the estimator from $O(1/b)$ to $O(1/b^2)$. All methods have the same magnitude of $\var{\hat{\sigma}_b^2$. This reduction in bias is obtained through the use of tapering windows which reduce the weighting of samples near the beginning and end of a given block.
+
+\begin{align}
+	\hat{\sigma}_{b,\text{TBB}} &= \frac{1}{N - b + 1} \frac{1}{\norm{w_b}_2^2} \sum_{i=0}^{N - b} \left\{ \sum_{j=1}^{b} w_b(j) X_{i + j} - \sum_{t=1}^{N} \sum_{j=0}^{N-b} w_b(t-j) \frac{X_t}{N - b + 1} \right\}^2 \approx \sigma_{\infty},
+	\quad\text{where}\qquad & w_n(t) = 
+\end{align}
+
+\subsection{Optimal Block Length Selection}
+%The circular block bootstrap, stationary bootstrap, and tapered block bootstrap all depend on the specification of a block length $b$. In determining the asymptotic performance of each of these methods, it is assumed that the optimal block length is selected. However, this optimal block length is not known in practice. In response, Politis and White \cite{} provide a method for estimating the optimal block length for each of these bootstrap methods. A similar method was proposed by XXX \cite{}, but the method of Politis and White has been shown to have a superior convergence rate \cite{nordman_convergence_2014}.
+This section should probably look like Section 3 of Theunissen, noting the differences in optimal block length selection for each method. However this optimal block size is \emph{never} known in practice, so an It may also be useful to note that the proofs of asymptotic performance of each method make the assumption that the MSE-optimal block length is used in each method, though for finite-sample data, this is an unknown quantity. A derivation of the MSE-optimal block length for each method involves infinite sums which must be approximated for finitely many samples. This is done using the flat-top lag window method of Politis and Romano, though that detail likely isn't important for this paper.
+
+All of the bootstrap methods presented here require the specification of a block length $b$, with MSE-optimal estimates of $\sigma_{\infty}$ being dependent on selecting the MSE-optimal block length $b_{opt}$. However, $b_{opt}$ is \emph{never} known in practice. We then have the additional problem of trying to calculate an approximate optimal block length, $\hat{b}_{opt}$. A method for doing this is outlined in \cite{politis_automatic_2004}, which proceeds as follows:
+% TODO: Add methodology here, like Theunissen, Section 3
+
+
+\section{Experimental Data Sets}
+\begin{itemize}
+	\item Description of each data set, experimental setup. Go to Smith et al (2018) and the conference paper for this info.
+	\item Include ensemble-averaged autocorrelation function plot, a la Theunissen, Fig. 3a. %TODO: What about PSD?
+	\item Note that stochastic structure influences estimates of the integral time scale (see Thiebaux and Zwiers) and that each data set has a different autocorrelative structure
+\end{itemize}
+
+\section{Results}
+\subsection{Confidence Interval Accuracy}
+
+NOTES: To be inserted
+\begin{enumerate}[1.]
+\item 3 pairs of plots (2 for each experiment) showing coverage for fixed NPIN across sampling rates, parents stats vs. record stats.
+\end{enumerate}
+\subsection{Mean Squared Error}
+NOTES: To be inserted
+\begin{enumerate}[1.]
+\item 3 Box plots showing MSE at the highest sampling rates.
+\item Let's get those heat maps going again?  I think they are useful, just need adequate discussion.  Questions: (i) can we remove the lowest sampling rates in the arrays?  (ii) Can these be performed plotting NPIN (rather than N) vs. sampling rate?
+\end{enumerate}
+
+\begin{comment}
+\begin{figure}[H]
+\begin{center}
+%\includegraphics[width=0.5\textwidth]{Figures/MeanConvHaileyData.pdf}
+\caption{Ensemble average error of the mean as a function of the number of samples acquired.  Dashed line is the standard error.}
+\label{fig:windtunnel}
+\end{center}
+\end{figure}
+ % % % % % % % % % % % % % % % %
+
+%%%%%%%%%%%
+\begin{figure}[H]
+\begin{center}
+%\includegraphics[width=0.5\textwidth]{Figures/MeanConv.pdf}
+\caption{}
+\label{fig:windtunnel}
+\end{center}
+\end{figure}
+\end{comment}
+ 
+\section*{Acknowledgement}
+
+
+\section*{References}
+\bibliographystyle{plain}
+
+\bibliography{references}
+
+
+\end{document}
+

@@ -1,0 +1,34 @@
+\begin{thebibliography}{1}
+
+\bibitem{barber2011}
+David Barber, A~Taylan Cemgil, and Silvia Chiappa.
+\newblock {\em Bayesian time series models}.
+\newblock Cambridge University Press, 2011.
+
+\bibitem{box2015}
+George~EP Box, Gwilym~M Jenkins, Gregory~C Reinsel, and Greta~M Ljung.
+\newblock {\em Time series analysis: forecasting and control}.
+\newblock John Wiley \& Sons, 2015.
+
+\bibitem{rosenblatt2012}
+Murray Rosenblatt.
+\newblock {\em Stationary sequences and random fields}.
+\newblock Springer Science \& Business Media, 2012.
+
+\bibitem{smith2018}
+Barton~L Smith, Douglas~R Neal, Mark~A Feero, and Geordie Richards.
+\newblock Assessing the limitations of effective number of samples for finding
+  the uncertainty of the mean of correlated data.
+\newblock {\em Measurement Science and Technology}, 29(12):125304, 2018.
+
+\bibitem{theunissen2008}
+R~Theunissen, A~Di~Sante, ML~Riethmuller, and RA~Van~den Braembussche.
+\newblock Confidence estimation using dependent circular block bootstrapping:
+  application to the statistical analysis of piv measurements.
+\newblock {\em Experiments in Fluids}, 44(4):591--596, 2008.
+
+\bibitem{thiebaux1984}
+HJ~Thiebaux and FW~Zwiers.
+\newblock The interpretation and estimation of effective sample size.
+
+\end{thebibliography}
